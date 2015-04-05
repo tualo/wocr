@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+var fs = require('fs'),
+    program = require('commander'),
+    pjson = require('../package.json'),
+    path =  require('path'),
+    clss = require(path.join('..','lib','main'));
+
+program
+    .version(pjson.version)
+    .description('wocr')
+    .usage('[options]')
+    .option('-c [camera]','run the ocr with a different camera index')
+    .parse(process.argv);
+
+var index = program.camera || 0;
+var ocr = new clss.OCR();
+ocr.start(index,true);
