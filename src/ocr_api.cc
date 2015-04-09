@@ -122,6 +122,9 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
 
   obj->ocr->SetImage((uchar*)obj->im.data, obj->im.cols, obj->im.rows, 1, obj->im.cols);
 
+  gray.release();
+  mat.release();
+  //im->mat.release();
 	NanReturnValue(args.Holder());
 }
 
@@ -150,6 +153,8 @@ void OCRApi::GetBarcode(const FunctionCallbackInfo<Value>& args){
     result->Set(v8::Integer::New(args.GetIsolate(), i), obj);
     i++;
   }
+  //image.dispose();
+  //delete raw;
   NanReturnValue(result);
 }
 
@@ -211,6 +216,8 @@ void OCRApi::SetImage(const FunctionCallbackInfo<Value>& args) {
 
   OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
   obj->ocr->SetImage(pix);
+  delete pix;
+
   NanReturnValue(args.Holder());
 }
 

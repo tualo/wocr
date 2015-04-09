@@ -10,11 +10,11 @@ program
     .version(pjson.version)
     .description('wocr')
     .usage('[options]')
-    .option('-c [camera]','run the ocr with a different camera index')
+    .option('-c [c]','run the ocr with a different camera index')
     .option('-w [w]','the width of the cap image')
     .option('-h [h]','the height of the cap image')
     .parse(process.argv);
 
 
-var ocr = new clss.OCR(program.C,program.W,program.H);
+var ocr = new clss.OCR(program.C*1,program.W,program.H);
 ocr.start(true);
