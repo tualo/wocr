@@ -11,8 +11,10 @@ program
     .description('wocr')
     .usage('[options]')
     .option('-c [camera]','run the ocr with a different camera index')
+    .option('-w [w]','the width of the cap image')
+    .option('-h [h]','the height of the cap image')
     .parse(process.argv);
 
-var index = program.camera || 0;
-var ocr = new clss.OCR();
-ocr.start(index,true);
+
+var ocr = new clss.OCR(program.C,program.W,program.H);
+ocr.start(true);
