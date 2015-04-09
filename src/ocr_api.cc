@@ -105,7 +105,19 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
   }
 
   cv::Mat gray;
-  cv::cvtColor(mat, gray, CV_BGR2GRAY);
+
+
+
+
+  //cv::cvtColor(mat, gray, CV_YUV420p2GRAY);
+  //mat.convertTo(gray,CV_YUV420p2GRAY);
+
+  try{
+    cv::cvtColor(mat, gray, CV_BGR2GRAY);
+  }catch (Exception& e){
+    cv::cvtColor(mat, gray, CV_YUV420p2GRAY);
+  }
+
   obj->im = gray.clone();
 
 //  cv::bitwise_not(obj->im, obj->im);
