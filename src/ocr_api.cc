@@ -36,7 +36,7 @@ void OCRApi::Initialize(v8::Handle<v8::Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(tpl, "Clear", Clear);
   NODE_SET_PROTOTYPE_METHOD(tpl, "End", End);
 
-  NODE_SET_PROTOTYPE_METHOD(tpl, "SetImage", SetImage);
+//  NODE_SET_PROTOTYPE_METHOD(tpl, "SetImage", SetImage);
   NODE_SET_PROTOTYPE_METHOD(tpl, "SetMatrix", SetMatrix);
   NODE_SET_PROTOTYPE_METHOD(tpl, "Recognize", Recognize);
 
@@ -104,7 +104,7 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
     depth = 8;
   }
 
-  cv::Mat gray;
+  //cv::Mat gray;
 
 
 
@@ -112,18 +112,18 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
   //cv::cvtColor(mat, gray, CV_YUV420p2GRAY);
   //mat.convertTo(gray,CV_YUV420p2GRAY);
 
-  try{
-    cv::cvtColor(mat, gray, CV_BGR2GRAY);
-  }catch (Exception& e){
-    cv::cvtColor(mat, gray, CV_YUV420p2GRAY);
-  }
+//  try{
+//    cv::cvtColor(mat, gray, CV_BGR2GRAY);
+//  }catch (Exception& e){
+//    cv::cvtColor(mat, gray, CV_YUV420p2GRAY);
+//  }
 
-  obj->im = gray.clone();
+  obj->im = mat.clone();
 
 //  cv::bitwise_not(obj->im, obj->im);
   double thres = 114;//args[1]->ToNumber();
   double color = 255;
-  cv::threshold(obj->im, obj->im, thres, color, CV_THRESH_BINARY);
+//  cv::threshold(obj->im, obj->im, thres, color, CV_THRESH_BINARY);
 
 
   obj->ocr->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
@@ -134,7 +134,7 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
 
   obj->ocr->SetImage((uchar*)obj->im.data, obj->im.cols, obj->im.rows, 1, obj->im.cols);
 
-  gray.release();
+  //gray.release();
   mat.release();
   //im->mat.release();
 	NanReturnValue(args.Holder());
@@ -146,15 +146,27 @@ void OCRApi::GetBarcode(const FunctionCallbackInfo<Value>& args){
   HandleScope scope(isolate);
   OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
 
+
   zbar::ImageScanner scanner;
   scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
   uchar *raw = (uchar *)obj->im.data;
+
+  std::cout << "w " << obj->im.cols << "h " << obj->im.rows << "\n";
+
   zbar::Image image(obj->im.cols, obj->im.rows, "Y800", raw, obj->im.cols * obj->im.rows);
 
+  //std::cout << "FORMAT" << image.get_format() << "\n";
 
   // scan the image for barcodes
   int n = scanner.scan(image);
+
+//  fprintf(stderr, "%s", _zbar_error_string(err, verbosity));
+
+//  std::cout << "RESULT: " << n << "\n";
   int i = 0;
+
+  //std::cout << _zbar_error_string(scanner,4);
+
   Local<v8::String> str = v8::String::NewFromUtf8(isolate,"");
   Local<v8::Array> result = Array::New(isolate, 0 );
 
@@ -205,33 +217,6 @@ void OCRApi::GetNumbers(const FunctionCallbackInfo<Value>& args) {
 
 }
 
-
-void OCRApi::SetImage(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = Isolate::GetCurrent();
-  HandleScope scope(isolate);
-
-  PIX* pix = NULL;
-
-  if (args.Length() == 1){
-    if (args[0]->IsString()) {
-      pix = pixRead(strdup(*(String::Utf8Value(args[0]))));
-    } else {
-      //PixWrap* pixWrap = ObjectWrap::Unwrap<PixWrap>(args[0]->ToObject());
-      //pix = pixWrap->data();
-    }
-  }
-
-  if (pix == NULL) {
-    //return ThrowException(Exception::Error(String("Image was not found or has unsupported format."));
-    return;
-  }
-
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
-  obj->ocr->SetImage(pix);
-  delete pix;
-
-  NanReturnValue(args.Holder());
-}
 
 
 void OCRApi::Recognize(const FunctionCallbackInfo<Value>& args) {

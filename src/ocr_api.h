@@ -26,7 +26,7 @@ class OCRApi : public node::ObjectWrap {
 
     static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
     static void Init(const FunctionCallbackInfo<Value>& args);
-    static void SetImage(const FunctionCallbackInfo<Value>& args);
+    //static void SetImage(const FunctionCallbackInfo<Value>& args);
     static void SetMatrix(const FunctionCallbackInfo<Value>& args);
 
     static void Recognize(const FunctionCallbackInfo<Value>& args);
