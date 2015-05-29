@@ -4,7 +4,7 @@ var fs = require('fs'),
     program = require('commander'),
     pjson = require('../package.json'),
     path =  require('path'),
-    clss = require(path.join('..','lib','main'));
+    clss = require(path.join('..','lib','cmd'));
 
 program
     .version(pjson.version)
