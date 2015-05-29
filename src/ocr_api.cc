@@ -126,11 +126,11 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
 //  cv::threshold(obj->im, obj->im, thres, color, CV_THRESH_BINARY);
 
 
-  obj->ocr->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
+//  obj->ocr->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
 //  obj->ocr->SetPageSegMode(tesseract::PSM_AUTO_ONLY);
 //  obj->ocr->SetPageSegMode(tesseract::PSM_AUTO);
-//  obj->ocr->SetPageSegMode(tesseract::PSM_AUTO_OSD);
-
+  obj->ocr->SetPageSegMode(tesseract::PSM_AUTO_OSD);
+  obj->ocr->SetVariable("min_orientation_margin","1");
 
   obj->ocr->SetImage((uchar*)obj->im.data, obj->im.cols, obj->im.rows, 1, obj->im.cols);
 
@@ -148,10 +148,14 @@ void OCRApi::GetBarcode(const FunctionCallbackInfo<Value>& args){
 
 
   zbar::ImageScanner scanner;
+
   scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
+  scanner.set_config(zbar::ZBAR_I25, zbar::ZBAR_CFG_ADD_CHECK, 0);
+  scanner.set_config(zbar::ZBAR_I25, zbar::ZBAR_CFG_EMIT_CHECK, 0);
+
   uchar *raw = (uchar *)obj->im.data;
 
-  std::cout << "w " << obj->im.cols << "h " << obj->im.rows << "\n";
+  //std::cout << "w " << obj->im.cols << "h " << obj->im.rows << "\n";
 
   zbar::Image image(obj->im.cols, obj->im.rows, "Y800", raw, obj->im.cols * obj->im.rows);
 
@@ -186,7 +190,7 @@ void OCRApi::GetText(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
   OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
-  obj->ocr->SetVariable("tessedit_char_whitelist", "0123456789ABCDEFGHIJKLMNOPQSRTUVWXYZabcdefghijklmnopqrstuvwxyz -");
+  obj->ocr->SetVariable("tessedit_char_whitelist", "0123456789ABCDEFGHIJKLMNOPQSRTUVWXYZabcdefghijklmnopqrstuvwxyzäöüÄÖÜß -");
   obj->ocr->Recognize(NULL);
   char *text = obj->ocr->GetUTF8Text();
 
