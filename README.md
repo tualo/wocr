@@ -6,7 +6,7 @@ An ocr package for node. This package uses opencv, tesseract and zbarimg.
 
 
 ## Install
-  You'll need OpenCV 2.3.1 or newer, tesseract 3.02.02 o newer, leptonica 1.71 or newer and zbar 0.10.0 or newer.
+  You'll need OpenCV 2.3.1 or newer, tesseract 3.02.02 or newer, leptonica 1.71 or newer and zbar 0.10.0 or newer.
 
   ```
   npm install wocr
