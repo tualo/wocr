@@ -1,6 +1,7 @@
-[![endorse](https://api.coderwall.com/thomashoffmann1979/endorsecount.png)](https://coderwall.com/thomashoffmann1979)
-
 # wocr
+
+[![Build Status](https://secure.travis-ci.org/tualo/wocr.png)](http://travis-ci.org/tualo/wocr)
+[![endorse](https://api.coderwall.com/thomashoffmann1979/endorsecount.png)](https://coderwall.com/thomashoffmann1979)
 
 An ocr package for node. This package uses opencv, tesseract and zbarimg.
 
