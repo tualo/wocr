@@ -6,7 +6,7 @@
   "bin": {
     "sorter": "./bin/wocr"
   },
-  "version": "0.0.2",
+  "version": "0.1.0",
   "engines": {
     "node": ">=0.12.0"
   },
@@ -33,8 +33,8 @@
   },
   "readmeFilename": "README.md",
   "dependencies": {
+    "opencv": "git+https://github.com/tualo/node-opencv.git",
     "nan": "*",
-    "opencv": "https://github.com/tualo/node-opencv.git#master",
     "commander": "*"
   }
 
