@@ -3,7 +3,6 @@
   "description": "a library that regonizes text, and barcodes using opencv, tesseract and zbarimg",
   "homepage": "https://github.com/tualo/wocr",
   "main": "lib/main.js",
-
   "license": "GPL-3.0",
   "version": "0.2.1",
   "engines": {
@@ -12,7 +11,7 @@
   "keywords": [
     "ocr",
     "zbarimg",
-    "tesseract",
+    "tesseract"
   ],
   "author": [
     {
