@@ -19,7 +19,7 @@ OCRApi::OCRApi() {
 
 
 OCRApi::~OCRApi() {
-  im.release();
+  //im.release();
   //ocr->Clear();
   //ocr->End();
 };
