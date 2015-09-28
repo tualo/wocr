@@ -12,6 +12,7 @@
 
 #include "../node_modules/opencv/src/Matrix.h"
 #include "ocr_bindings.h"
+#include <nan.h>
 
 using namespace v8;
 
