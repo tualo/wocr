@@ -19,6 +19,7 @@ OCRApi::OCRApi() {
 
 
 OCRApi::~OCRApi() {
+  im.release();
   //ocr->Clear();
   //ocr->End();
 };
@@ -35,6 +36,8 @@ void OCRApi::Initialize(v8::Handle<v8::Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(tpl, "Init", Init);
   NODE_SET_PROTOTYPE_METHOD(tpl, "Clear", Clear);
   NODE_SET_PROTOTYPE_METHOD(tpl, "End", End);
+
+  NODE_SET_PROTOTYPE_METHOD(tpl, "free", Free);
 
 //  NODE_SET_PROTOTYPE_METHOD(tpl, "SetImage", SetImage);
   NODE_SET_PROTOTYPE_METHOD(tpl, "SetMatrix", SetMatrix);
@@ -78,6 +81,19 @@ void OCRApi::End(const FunctionCallbackInfo<Value>& args) {
 
   OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
   obj->ocr->End();
+  NanReturnValue(args.Holder());
+}
+
+
+
+void OCRApi::Free(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+
+  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  //obj->ocr->End();
+  obj->im.release();
+  //delete obj->im;
   NanReturnValue(args.Holder());
 }
 
@@ -136,6 +152,7 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
 
   //gray.release();
   mat.release();
+  //delete mat;
   //im->mat.release();
 	NanReturnValue(args.Holder());
 }
@@ -183,6 +200,8 @@ void OCRApi::GetBarcode(const FunctionCallbackInfo<Value>& args){
   }
   //image.dispose();
   //delete raw;
+  delete(raw);
+
   NanReturnValue(result);
 }
 
@@ -198,6 +217,7 @@ void OCRApi::GetText(const FunctionCallbackInfo<Value>& args) {
   /*
   std::cout << "***" << text << std::endl;
 */
+
 
   NanReturnValue(v8::String::NewFromUtf8(isolate,text));
 
