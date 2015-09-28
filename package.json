@@ -34,7 +34,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "opencv": "git+https://github.com/tualo/node-opencv.git",
-    "nan": "*",
+    "nan": "1.7.0",
     "commander": "*"
   }
 

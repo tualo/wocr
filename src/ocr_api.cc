@@ -4,7 +4,7 @@
 #include <tesseract/baseapi.h>
 #include <tesseract/strngs.h>
 #include "ocr_api.h"
-
+#include <nan.h>
 
 
 using namespace v8;
