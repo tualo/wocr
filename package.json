@@ -4,7 +4,7 @@
   "homepage": "https://github.com/tualo/wocr",
   "main": "lib/main.js",
   "license": "GPL-3.0",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "engines": {
     "node": ">=0.12.0"
   },
