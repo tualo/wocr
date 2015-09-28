@@ -92,7 +92,7 @@ void OCRApi::Free(const FunctionCallbackInfo<Value>& args) {
 
   OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
   //obj->ocr->End();
-  //obj->im.release();
+  obj->im.release();
   //delete obj->im;
   NanReturnValue(args.Holder());
 }
