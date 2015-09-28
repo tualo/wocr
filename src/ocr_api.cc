@@ -200,7 +200,7 @@ void OCRApi::GetBarcode(const FunctionCallbackInfo<Value>& args){
   }
   //image.dispose();
   //delete raw;
-  delete(raw);
+  //delete(raw);
 
   NanReturnValue(result);
 }
