@@ -92,7 +92,7 @@ void OCRApi::Free(const FunctionCallbackInfo<Value>& args) {
 
   OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
   //obj->ocr->End();
-  obj->im.release();
+  //obj->im.release();
   //delete obj->im;
   NanReturnValue(args.Holder());
 }
@@ -151,7 +151,7 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
   obj->ocr->SetImage((uchar*)obj->im.data, obj->im.cols, obj->im.rows, 1, obj->im.cols);
 
   //gray.release();
-  mat.release();
+  //mat.release();
   //delete mat;
   //im->mat.release();
 	NanReturnValue(args.Holder());
