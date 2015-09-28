@@ -93,7 +93,7 @@ void OCRApi::Free(const FunctionCallbackInfo<Value>& args) {
   OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
   //obj->ocr->End();
   obj->im.release();
-  //delete obj->im;
+  delete obj->im;
   NanReturnValue(args.Holder());
 }
 
@@ -198,7 +198,10 @@ void OCRApi::GetBarcode(const FunctionCallbackInfo<Value>& args){
     result->Set(v8::Integer::New(args.GetIsolate(), i), obj);
     i++;
   }
+  //delete(image);
   //image.dispose();
+  image.set_data(NULL, 0);
+
   //delete raw;
   //delete(raw);
 
