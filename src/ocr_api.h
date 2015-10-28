@@ -16,7 +16,7 @@
 
 using namespace v8;
 
-class OCRApi : public node::ObjectWrap {
+class OCRApi : public Nan::ObjectWrap {
   public:
     static void Initialize(v8::Handle<v8::Object> target);
 
@@ -25,21 +25,22 @@ class OCRApi : public node::ObjectWrap {
     explicit OCRApi();
     ~OCRApi();
 
-    static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-    static void Init(const FunctionCallbackInfo<Value>& args);
-    //static void SetImage(const FunctionCallbackInfo<Value>& args);
-    static void SetMatrix(const FunctionCallbackInfo<Value>& args);
+    static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void Init(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    //static void SetImage(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void SetMatrix(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
-    static void Recognize(const FunctionCallbackInfo<Value>& args);
-    static void GetText(const FunctionCallbackInfo<Value>& args);
-    static void GetNumbers(const FunctionCallbackInfo<Value>& args);
-    static void GetBarcode(const FunctionCallbackInfo<Value>& args);
+    static void Recognize(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetText(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetNumbers(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetBarcode(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
-    static void Clear(const v8::FunctionCallbackInfo<v8::Value>& args);
-    static void End(const v8::FunctionCallbackInfo<v8::Value>& args);
-    static void Free(const v8::FunctionCallbackInfo<v8::Value>& args);
-    static v8::Persistent<v8::Function> constructor;
+    static void Clear(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void End(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void Free(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    //static v8::Persistent<v8::Function> constructor;
 
+    static Nan::Persistent<FunctionTemplate> constructor;
     tesseract::TessBaseAPI* ocr;
     cv::Mat im;
 };

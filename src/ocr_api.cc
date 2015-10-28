@@ -10,7 +10,7 @@
 using namespace v8;
 
 
-Persistent<Function> OCRApi::constructor;
+Nan::Persistent<FunctionTemplate> OCRApi::constructor;
 
 
 OCRApi::OCRApi() {
@@ -28,90 +28,95 @@ void OCRApi::Initialize(v8::Handle<v8::Object> exports) {
   Isolate* isolate = Isolate::GetCurrent();
 
   // Prepare constructor template
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
+  //Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
+  //const Nan::FunctionCallbackInfo<v8::Value>& info
+
+  Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(OCRApi::New);
+  constructor.Reset(tpl);
+
   tpl->SetClassName(String::NewFromUtf8(isolate, "OCR"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
-  NODE_SET_PROTOTYPE_METHOD(tpl, "Init", Init);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "Clear", Clear);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "End", End);
+  Nan::SetPrototypeMethod(tpl, "Init", Init);
+  Nan::SetPrototypeMethod(tpl, "Clear", Clear);
+  Nan::SetPrototypeMethod(tpl, "End", End);
 
-  NODE_SET_PROTOTYPE_METHOD(tpl, "free", Free);
+  Nan::SetPrototypeMethod(tpl, "free", Free);
 
-//  NODE_SET_PROTOTYPE_METHOD(tpl, "SetImage", SetImage);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "SetMatrix", SetMatrix);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "Recognize", Recognize);
+//  Nan::SetPrototypeMethod(tpl, "SetImage", SetImage);
+  Nan::SetPrototypeMethod(tpl, "SetMatrix", SetMatrix);
+  Nan::SetPrototypeMethod(tpl, "Recognize", Recognize);
 
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetText", GetText);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetNumbers", GetNumbers);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetBarcode", GetBarcode);
+  Nan::SetPrototypeMethod(tpl, "GetText", GetText);
+  Nan::SetPrototypeMethod(tpl, "GetNumbers", GetNumbers);
+  Nan::SetPrototypeMethod(tpl, "GetBarcode", GetBarcode);
 
 
 
-  constructor.Reset(isolate, tpl->GetFunction());
+  //constructor.Reset(isolate, tpl->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "OCR"), tpl->GetFunction());
 }
 
-void OCRApi::New(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  if (args.IsConstructCall()) {
+  if (info.IsConstructCall()) {
     // Invoked as constructor: `new MyObject(...)`
-    //double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+    //double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
     OCRApi* obj = new OCRApi();
-    obj->Wrap(args.This());
-    args.GetReturnValue().Set(args.This());
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
 
   } else {
-
+    Nan::ThrowTypeError("Cannot instantiate without new");
+    /*
     // Invoked as plain function `MyObject(...)`, turn into construct call.
     const int argc = 1;
-    Local<Value> argv[argc] = { args[0] };
+    Local<Value> argv[argc] = { info[0] };
     Local<Function> cons = Local<Function>::New(isolate, constructor);
-    args.GetReturnValue().Set(cons->NewInstance(argc, argv));
-
+    info.GetReturnValue().Set(cons->NewInstance(argc, argv));
+    */
   }
 }
 
-void OCRApi::End(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::End(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
   obj->ocr->End();
-  NanReturnValue(args.Holder());
+  info.GetReturnValue().Set(info.Holder());
 }
 
 
 
-void OCRApi::Free(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::Free(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
   //obj->ocr->End();
+
   obj->im.release();
-  delete obj->im;
-  NanReturnValue(args.Holder());
+  info.GetReturnValue().Set(info.Holder());
 }
 
 
-void OCRApi::Clear(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::Clear(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
   obj->ocr->Clear();
-  NanReturnValue(args.Holder());
+  info.GetReturnValue().Set(info.Holder());
 }
 
-void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::SetMatrix(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
-
-  Matrix *im = ObjectWrap::Unwrap<Matrix>(args[0]->ToObject());
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
+  Matrix *im = Nan::ObjectWrap::Unwrap<Matrix>(info[0]->ToObject());
   cv::Mat mat = im->mat;
 
 
@@ -137,8 +142,8 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
   obj->im = mat.clone();
 
 //  cv::bitwise_not(obj->im, obj->im);
-  double thres = 114;//args[1]->ToNumber();
-  double color = 255;
+  //double thres = 114;//info[1]->ToNumber();
+  //double color = 255;
 //  cv::threshold(obj->im, obj->im, thres, color, CV_THRESH_BINARY);
 
 
@@ -154,141 +159,85 @@ void OCRApi::SetMatrix(const FunctionCallbackInfo<Value>& args) {
   //mat.release();
   //delete mat;
   //im->mat.release();
-	NanReturnValue(args.Holder());
+	info.GetReturnValue().Set(info.Holder());
 }
 
-void OCRApi::GetBarcode(const FunctionCallbackInfo<Value>& args){
-
+void OCRApi::GetBarcode(const Nan::FunctionCallbackInfo<v8::Value>& info){
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
-
-
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
   zbar::ImageScanner scanner;
-
   scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
   scanner.set_config(zbar::ZBAR_I25, zbar::ZBAR_CFG_ADD_CHECK, 1);
-  //scanner.set_config(zbar::ZBAR_I25, zbar::ZBAR_CFG_EMIT_CHECK, 0);
-
   uchar *raw = (uchar *)obj->im.data;
-
-  //std::cout << "w " << obj->im.cols << "h " << obj->im.rows << "\n";
-
   zbar::Image image(obj->im.cols, obj->im.rows, "Y800", raw, obj->im.cols * obj->im.rows);
-
-  //std::cout << "FORMAT" << image.get_format() << "\n";
-
   // scan the image for barcodes
   int n = scanner.scan(image);
-
-//  fprintf(stderr, "%s", _zbar_error_string(err, verbosity));
-
-//  std::cout << "RESULT: " << n << "\n";
   int i = 0;
-
-  //std::cout << _zbar_error_string(scanner,4);
 
   Local<v8::String> str = v8::String::NewFromUtf8(isolate,"");
   Local<v8::Array> result = Array::New(isolate, 0 );
-
   for(zbar::Image::SymbolIterator symbol = image.symbol_begin(); symbol != image.symbol_end(); ++symbol) {
     Local<Object> obj = Object::New(isolate);
     obj->Set(String::NewFromUtf8(isolate, "code"),       v8::String::NewFromUtf8(isolate,  symbol->get_data().c_str() ) );
     obj->Set(String::NewFromUtf8(isolate, "type"),       v8::String::NewFromUtf8(isolate,  symbol->get_type_name().c_str() ) );
-    result->Set(v8::Integer::New(args.GetIsolate(), i), obj);
+    result->Set(v8::Integer::New(info.GetIsolate(), i), obj);
     i++;
   }
-  //delete(image);
-  //image.dispose();
   image.set_data(NULL, 0);
-
-  //delete raw;
-  //delete(raw);
-
-  NanReturnValue(result);
+  //image.dispose();
+  scanner.recycle_image(image);
+  info.GetReturnValue().Set(result);
 }
 
-void OCRApi::GetText(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::GetText(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
   obj->ocr->SetVariable("tessedit_char_whitelist", "0123456789ABCDEFGHIJKLMNOPQSRTUVWXYZabcdefghijklmnopqrstuvwxyzäöüÄÖÜß|/éè -");
   obj->ocr->Recognize(NULL);
   char *text = obj->ocr->GetUTF8Text();
-
-
-  /*
-  std::cout << "***" << text << std::endl;
-*/
-
-
-  NanReturnValue(v8::String::NewFromUtf8(isolate,text));
+  info.GetReturnValue().Set(v8::String::NewFromUtf8(isolate,text));
 
 }
 
 
-void OCRApi::GetNumbers(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::GetNumbers(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
   obj->ocr->SetVariable("tessedit_char_whitelist", "0123456789");
   obj->ocr->Recognize(NULL);
   char *text = obj->ocr->GetUTF8Text();
-
-
-  /*
-  std::cout << "***" << text << std::endl;
-*/
-
-  NanReturnValue(v8::String::NewFromUtf8(isolate,text));
+  info.GetReturnValue().Set(v8::String::NewFromUtf8(isolate,text));
 
 }
 
-
-
-void OCRApi::Recognize(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::Recognize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
   obj->ocr->Recognize(NULL);
-  NanReturnValue(args.Holder());
+  info.GetReturnValue().Set(info.Holder());
 
 }
 
-/*
-int depth;
- if(subImage.depth() == CV_8U)
-    depth = 8;
- //other cases not considered yet
-
- PIX* pix = pixCreateHeader(subImage.size().width, subImage.size().height, depth);
- pix->data = (l_uint32*) subImage.data;
-*/
-
-void OCRApi::Init(const FunctionCallbackInfo<Value>& args) {
+void OCRApi::Init(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-
-
-  if (args.Length() == 1){
-    OCRApi* obj = ObjectWrap::Unwrap<OCRApi>(args.This());
+  if (info.Length() == 1){
+    OCRApi* obj = Nan::ObjectWrap::Unwrap<OCRApi>(info.This());
     char *lang;
-    v8::String::Utf8Value arg_lang(args[0]->ToString());
-
+    v8::String::Utf8Value arg_lang(info[0]->ToString());
     if (arg_lang.length()) {
       lang = *arg_lang;
     } else {
       lang = (char *) "eng";
     }
-
-    // int ret = obj->ocr->Init(NULL, lang, tesseract::OEM_DEFAULT);
-    // int ret = obj->ocr->Init(NULL, lang, tesseract::OEM_CUBE_ONLY);
-    // int ret = obj->ocr->Init(NULL, lang, tesseract::OEM_TESSERACT_CUBE_COMBINED);
     int ret = obj->ocr->Init(NULL, lang, tesseract::OEM_TESSERACT_ONLY);
-
-    args.GetReturnValue().Set(Boolean::New(isolate, ret == 0));
+    info.GetReturnValue().Set(Boolean::New(isolate, ret == 0));
   }else{
-    args.GetReturnValue().Set(Boolean::New(isolate, false ));
+    info.GetReturnValue().Set(Boolean::New(isolate, false ));
   }
 }
