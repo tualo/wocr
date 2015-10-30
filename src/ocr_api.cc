@@ -238,6 +238,6 @@ void OCRApi::Init(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     int ret = obj->ocr->Init(NULL, lang, tesseract::OEM_TESSERACT_ONLY);
     info.GetReturnValue().Set(Boolean::New(isolate, ret == 0));
   }else{
-    return false; //info.GetReturnValue().Set(Boolean::New(isolate, false ));
+    info.GetReturnValue().Set(true);
   }
 }
