@@ -236,7 +236,7 @@ void OCRApi::Init(const Nan::FunctionCallbackInfo<v8::Value>& info) {
       lang = (char *) "eng";
     }
     int ret = obj->ocr->Init(NULL, lang, tesseract::OEM_TESSERACT_ONLY);
-    info.GetReturnValue().Set(Boolean::New(isolate, ret == 0));
+    info.GetReturnValue().Set(ret == 0);
   }else{
     info.GetReturnValue().Set(true);
   }
